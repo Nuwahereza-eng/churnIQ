@@ -1,0 +1,1 @@
+{"churn_probability":0.3241,"predicted_churn":false,"predicted_label":"No","risk_band":"Medium","threshold":0.36,"warnings":[],"model_name":"Calibrated Random Forest"}

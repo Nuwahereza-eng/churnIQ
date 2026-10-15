@@ -1,0 +1,15 @@
+# Versions verified on Python 3.12 (Ubuntu), October 2026.
+pandas==3.0.6
+numpy==2.5.4
+scipy==1.18.1
+scikit-learn==1.9.1
+joblib==1.6.0
+matplotlib==3.11.2
+seaborn==0.13.2
+altair==6.3.0
+streamlit==1.66.0
+# REST API for the React frontend (backend/)
+fastapi==0.142.2
+uvicorn==0.54.0
+pydantic==2.13.5
+python-multipart==0.0.32
