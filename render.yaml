@@ -1,0 +1,10 @@
+# Render Blueprint: deploys ChurnIQ as one free Docker web service.
+# Render dashboard -> New -> Blueprint -> pick this repository.
+services:
+  - type: web
+    name: churniq
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true

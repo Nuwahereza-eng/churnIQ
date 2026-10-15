@@ -324,3 +324,27 @@ def test_cors_allows_only_configured_origin(client):
     bad = client.options("/api/health", headers={"Origin": "http://evil.example",
                                                   "Access-Control-Request-Method": "GET"})
     assert "access-control-allow-origin" not in bad.headers
+
+
+# ---------------- production: serving the built frontend ----------------
+
+def test_serves_frontend_when_static_dir_set(tmp_path):
+    (tmp_path / "assets").mkdir()
+    (tmp_path / "index.html").write_text("<!doctype html><div id=root></div>")
+    (tmp_path / "assets" / "app.js").write_text("console.log(1)")
+    (tmp_path / "favicon.svg").write_text("<svg/>")
+    (tmp_path.parent / "secret.txt").write_text("do not serve")
+    c = TestClient(create_app(Settings(static_dir=tmp_path)))
+
+    assert c.get("/").text.startswith("<!doctype html>")
+    assert c.get("/predict").text.startswith("<!doctype html>")  # client-side route
+    assert c.get("/assets/app.js").text == "console.log(1)"
+    assert c.get("/favicon.svg").text == "<svg/>"
+    assert "do not serve" not in c.get("/../secret.txt").text
+    _assert_error(c.get("/api/does-not-exist"), 404)
+    assert c.get("/api/health").status_code == 200
+
+
+def test_frontend_not_served_by_default(client):
+    assert client.get("/").status_code == 404
+

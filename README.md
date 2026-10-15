@@ -182,10 +182,28 @@ Open http://localhost:8501. Pages:
 
 ## Deployment
 
-**ChurnIQ:** host the FastAPI backend on any Python host (e.g. Render, Railway or a VM:
-`uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT`) and the contents of `frontend/dist/` on any static host.
-Build the frontend with `VITE_API_BASE_URL` set to the API's URL, and set `CHURNIQ_CORS_ORIGINS` on the backend to
-the frontend's URL. The dataset, model and results files must be present on the backend host.
+**ChurnIQ** ships as one Docker container: the [Dockerfile](Dockerfile) builds the React app, installs the API's
+runtime dependencies ([requirements-api.txt](requirements-api.txt)), downloads the public dataset and checks its
+SHA-256 against the version the model was trained on. With `CHURNIQ_STATIC_DIR` set (the image sets it), FastAPI
+serves the frontend and the API from the same address, so no CORS or API URL configuration is needed.
+
+Test the image locally:
+
+```bash
+docker build -t churniq .
+docker run -p 8000:8000 churniq      # open http://localhost:8000
+```
+
+Deploy free on **Render** (free web service: 512 MB RAM; the container uses about 180 MB):
+
+1. Push the repository to GitHub (the model and `reports/evaluation_results.json` must be committed; the CSV is
+   downloaded during the build).
+2. In the Render dashboard choose **New → Blueprint**, select the repository and apply. [render.yaml](render.yaml)
+   creates a free Docker web service with `/api/health` as its health check.
+3. The first build takes a few minutes. Later pushes to `main` redeploy automatically.
+
+Free services sleep after about 15 minutes without traffic; the next visit then takes up to a minute to wake.
+The same image runs on any container host that sets `$PORT` (for example Hugging Face Spaces, Koyeb or Fly.io).
 
 **Streamlit prototype:** it can be deployed to **Streamlit Community Cloud** (free):
 
@@ -195,7 +213,7 @@ the frontend's URL. The dataset, model and results files must be present on the 
 3. On first visit, use the **Download dataset** button (or commit the CSV if your licence review allows).
 
 Any host that can run `streamlit run app.py --server.port $PORT` (e.g. Render, Railway, a VM) also works.
-Deployment has not been performed as part of this work.
+The Docker image has been built and tested locally; deployment to a host is done by the project owner.
 
 ## Documentation
 
