@@ -67,6 +67,8 @@ tests/         (pytest suite, synthetic test data)
 
 ## Installation (Ubuntu)
 
+> **On Windows?** Follow [WINDOWS_SETUP.md](WINDOWS_SETUP.md) for step-by-step PowerShell instructions.
+
 Requires Python 3.11+ (developed with 3.12). The React frontend also needs Node.js 22.12 or later (developed with
 22.15) and npm.
 
